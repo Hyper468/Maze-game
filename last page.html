@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thank You, Chhavi</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffe6f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .heart {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      background-color: pink;
+      transform: rotate(45deg);
+      animation: floatHearts 15s linear infinite;
+      opacity: 0.8;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      width: 20px;
+      height: 20px;
+      background-color: pink;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -10px;
+      top: 0;
+    }
+
+    @keyframes floatHearts {
+      0% { bottom: -50px; opacity: 0.6; }
+      100% { bottom: 100%; transform: translateX(-50px) rotate(360deg); opacity: 0; }
+    }
+
+    .start-screen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: #ffe6f0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .start-screen h1 {
+      font-size: 2em;
+      color: crimson;
+      margin-bottom: 20px;
+    }
+
+    .start-screen button {
+      background-color: crimson;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .start-screen button:hover {
+      background-color: darkred;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: crimson;
+      padding: 30px;
+      display: none;
+    }
+
+    .message {
+      font-size: 1.5em;
+      font-weight: bold;
+      animation: fadeIn 3s ease forwards;
+    }
+
+    .poem {
+      margin-top: 30vh;
+      font-size: 1.3em;
+      font-weight: 500;
+      display: none;
+      animation: fadeInOut 4s ease-in-out forwards;
+      color: crimson;
+      white-space: pre-line;
+      text-shadow: 0 0 5px crimson, 0 0 1px pink;
+    }
+
+    .sorry, .thankyou-end {
+      display: none;
+      font-size: 1.1em;
+      margin-top: 40px;
+      animation: fadeIn 3s ease forwards;
+    }
+
+    .thankyou-end {
+      font-size: 1.6em;
+      font-weight: bold;
+    }
+
+    .image-container {
+      display: none;
+      margin-top: 40px;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    .image-container img {
+      max-width: 200px;
+      border-radius: 20px;
+    }
+
+    .image-caption {
+      font-size: 1em;
+      margin-top: 10px;
+      color: crimson;
+      font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Music -->
+<audio id="bgMusic" loop>
+  <source src="Bg.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+
+<!-- Floating Hearts -->
+<script>
+  for (let i = 0; i < 30; i++) {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.bottom = Math.random() * -100 + 'px';
+    heart.style.animationDuration = (10 + Math.random() * 10) + 's';
+    document.body.appendChild(heart);
+  }
+</script>
+
+<!-- Start Screen -->
+<div class="start-screen" id="startScreen">
+  <h1>Hi Chhavi, I have something for you</h1>
+  <button onclick="startExperience()">Tap Here</button>
+</div>
+
+<!-- Main Content -->
+<div class="content" id="mainContent">
+  <div class="message" id="thankyouMessage">
+    Thank you, Chhavi, for coming into my life. You brought light to my darkest days and made me feel truly alive. Your smile, your warmth, your presence—everything about you has left an unforgettable mark on my heart. No matter where life takes us, you'll always be a beautiful chapter of my story. I've written something for you, hope you like it.
+  </div>
+  <div class="poem" id="poemText"></div>
+  <div class="sorry" id="sorryMessage">
+    I’m so sorry, Chhavi. For every word unsaid, for every moment I let you down. I carry the weight of my mistakes every single day. I never meant to hurt you. I was lost, blind to how deeply I was pushing you away. If I could turn back time, I’d hold you tighter and love you louder. I regret it all, and I miss you more than words can say. I’m still here, still waiting with hope in my heart and your name in every beat.
+  </div>
+  <div class="image-container" id="finalImage">
+    <img src="flower.png" alt="Sketch Character Holding Flowers" />
+    <p class="image-caption">This is for you (I will give you the real ones when we meet)</p>
+  </div>
+  <div class="thankyou-end" id="thankYouEnd">
+    Thank you for playing.
+  </div>
+</div>
+
+<!-- Script -->
+<script>
+  const audio = document.getElementById("bgMusic");
+  const startScreen = document.getElementById("startScreen");
+  const mainContent = document.getElementById("mainContent");
+  const poemLines = [
+    "Your scent still lingers in the air,\nA whisper of you when you're not there",
+    "Your eyes like stars that lit my night,\nNow distant lost beyond my sight",
+    "Your smile my sun, my light, my home,\nNow just a shadow where I roam",
+    "I’d give my soul to see it again,\nTo feel its warmth, to ease this pain",
+    "Your laughter soft like falling rain,\nNow echoes back in silent pain",
+    "Your touch was my sacred place,\nA silent prayer a soft embrace,\nNow gone and I am lost in space",
+    "I was blind I pushed too far,\nEvery wound, my fault, my scar",
+    "Was foolish, blind, and wrong,\nI broke the melody of our song",
+    "I break the heart that beat for me,\nAnd now I drown in what should be",
+    "I carry guilt with every breath,\nA love so deep yet left for death",
+    "No excuses just my shame,\nNo one but myself to blame",
+    "I never meant to let you go\nBut now I drown in what I sow",
+    "My love for you still in my veins,\nA river wild a sky in flames",
+    "My love for you it never fades,\nThrough every night, through darker days",
+    "No pride, no plea just endless pain,\nCalling your name again and again",
+    "I wait, I wait, though time stands still,\nThrough every storm, through every chill",
+    "No path, no door, yet here I stand,\nJust waiting, just reach for my hand",
+    "But my heart still beats the same\nI’ll wait for you, just say my name"
+  ];
+
+  const poemContainer = document.getElementById("poemText");
+  const thankyou = document.getElementById("thankyouMessage");
+  const sorry = document.getElementById("sorryMessage");
+  const image = document.getElementById("finalImage");
+  const end = document.getElementById("thankYouEnd");
+
+  function startExperience() {
+    startScreen.style.display = 'none';
+    mainContent.style.display = 'block';
+
+    // Play music with fade-in
+    audio.volume = 0;
+    audio.play();
+    let vol = 0;
+    const fadeIn = setInterval(() => {
+      if (vol < 0.3) {
+        vol += 0.01;
+        audio.volume = vol;
+      } else {
+        clearInterval(fadeIn);
+      }
+    }, 200);
+
+    setTimeout(() => {
+      thankyou.style.display = 'none';
+      showPoemLine();
+    }, 12000);
+  }
+
+  let index = 0;
+  function showPoemLine() {
+    if (index < poemLines.length) {
+      poemContainer.innerText = poemLines[index];
+      poemContainer.style.display = 'block';
+      poemContainer.style.animation = 'fadeInOut 6s ease-in-out forwards';
+      index++;
+      setTimeout(() => {
+        poemContainer.style.display = 'none';
+        setTimeout(showPoemLine, 500);
+      }, 6000);
+    } else {
+      setTimeout(() => { sorry.style.display = 'block'; }, 1000);
+      setTimeout(() => { image.style.display = 'block'; }, 6000);
+      setTimeout(() => { end.style.display = 'block'; }, 9000);
+    }
+  }
+  window.onbeforeunload = function () {
+  audio.pause();
+  audio.currentTime = 0;
+};
+</script>
+
+</body>
+</html>

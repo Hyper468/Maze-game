@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maze Game</title>
+  <style>
+    body {
+      background-color: #ffe6f0;
+      font-family: 'Comic Sans MS', cursive;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding-top: 20px;
+      overflow-x: hidden;
+    }
+
+    .floating-heart {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: url('https://emojiapi.dev/api/v1/2764.svg') no-repeat center center / contain;
+      animation: floatUp 8s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      color: #ad1457;
+    }
+
+    #finalMsg {
+      font-size: 22px;
+      font-weight: bold;
+      color: #6a1b9a;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      background-color: #f8bbd0;
+      padding: 10px 20px;
+      border-radius: 15px;
+      text-align: center;
+      display: none;
+    }
+
+    #mazeContainer {
+      display: grid;
+      grid-template-columns: repeat(10, 30px);
+      grid-template-rows: repeat(10, 30px);
+      gap: 2px;
+      margin: 10px 0;
+    }
+
+    .cell {
+      width: 30px;
+      height: 30px;
+      background-color: #fce4ec;
+      border: 1px solid #f8bbd0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wall {
+      background-color: #f48fb1;
+    }
+
+    .player {
+      background-color: #8e24aa;
+      color: white;
+    }
+
+    .exit {
+      background-color: lightgreen !important;
+    }
+
+    .flower {
+      font-size: 18px;
+    }
+
+    .message {
+      margin: 12px 0;
+      text-align: center;
+      color: #d81b60;
+      font-weight: bold;
+      font-size: 18px;
+      min-height: 24px;
+    }
+
+    .controls {
+      margin-top: 30px;
+      display: grid;
+      grid-template-areas: 
+        ". up ."
+        "left . right"
+        ". down .";
+      gap: 8px;
+    }
+
+    .controls button {
+      padding: 10px 15px;
+      background-color: #f06292;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Hearts -->
+  <script>
+    for (let i = 0; i < 20; i++) {
+      let heart = document.createElement("div");
+      heart.className = "floating-heart";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDelay = Math.random() * 8 + "s";
+      document.body.appendChild(heart);
+    }
+  </script>
+
+  <h3>Collect the flowers and find the exit point!</h3>
+  <div id="finalMsg"></div>
+  <div id="mazeContainer"></div>
+  <div class="message" id="messageBox"></div>
+
+  <div class="controls">
+    <button style="grid-area: up;" onclick="move('up')">↑</button>
+    <button style="grid-area: left;" onclick="move('left')">←</button>
+    <button style="grid-area: right;" onclick="move('right')">→</button>
+    <button style="grid-area: down;" onclick="move('down')">↓</button>
+  </div>
+
+<script>
+  const maze = [
+    [1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,1,0,0,0,0,1],
+    [1,0,1,0,1,0,1,1,0,1],
+    [1,0,1,0,0,0,1,0,0,1],
+    [1,0,1,1,1,0,1,0,1,1],
+    [1,0,0,0,1,0,0,0,0,1],
+    [1,1,1,0,1,1,1,1,0,1],
+    [1,0,0,0,0,0,0,1,0,1],
+    [1,0,1,1,1,1,0,0,0,1],
+    [1,1,1,1,1,1,1,1,2,1],
+  ];
+
+  const flowers = {
+  "3,1": true,
+  "4,3": true,
+  "6,5": true,
+  "3,6": true,
+  "7,8": true
+  
+  };
+
+  const cheerMessages = [
+    "Nice work!",
+    "You're doing great!",
+    "Love it!",
+    "Keep going!",
+    "Almost there!"
+  ];
+
+  let playerPos = { x: 1, y: 1 };
+
+  function renderMaze() {
+    const container = document.getElementById('mazeContainer');
+    container.innerHTML = '';
+    for (let y = 0; y < maze.length; y++) {
+      for (let x = 0; x < maze[y].length; x++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        if (maze[y][x] === 1) cell.classList.add('wall');
+        if (maze[y][x] === 2) cell.classList.add('exit');
+        if (playerPos.x === x && playerPos.y === y) {
+          cell.classList.add('player');
+          cell.textContent = "☺";
+        } else if (flowers[`${x},${y}`]) {
+          cell.classList.add('flower');
+          cell.textContent = "🌸";
+        }
+        container.appendChild(cell);
+      }
+    }
+  }
+
+  function move(direction) {
+    const dx = { left: -1, right: 1, up: 0, down: 0 };
+    const dy = { left: 0, right: 0, up: -1, down: 1 };
+    const newX = playerPos.x + dx[direction];
+    const newY = playerPos.y + dy[direction];
+
+    if (maze[newY] && maze[newY][newX] !== 1) {
+      playerPos = { x: newX, y: newY };
+
+      const posKey = `${newX},${newY}`;
+      if (flowers[posKey]) {
+        document.getElementById("messageBox").textContent =
+          cheerMessages[Math.floor(Math.random() * cheerMessages.length)];
+        delete flowers[posKey];
+      }
+
+      renderMaze();
+
+      // Check if player reached exit
+      if (maze[playerPos.y][playerPos.x] === 2) {
+        document.getElementById("messageBox").textContent = "Nice! You found the way! Now we are together";
+        setTimeout(() => {
+          window.location.href = "last page.html";
+        }, 4000);
+      }
+    }
+  }
+
+  renderMaze();
+</script>
+</body>
+</html>
